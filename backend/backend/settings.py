@@ -1,12 +1,16 @@
+import os
 from pathlib import Path
+from dotenv import load_dotenv
+
+load_dotenv()
 
 BASE_DIR = Path(__file__).resolve().parent.parent
 
-SECRET_KEY = 'django-insecure-n96y-il3j#uss-0r@u85w%xz)ew!odan2#w!2x^qeckc0tt$57'
+SECRET_KEY = os.getenv('SECRET_KEY', 'default-secret-key')
 
-DEBUG = True
+DEBUG = os.getenv('DEBUG', 'False') == 'True'
 
-ALLOWED_HOSTS = ['*', 'localhost']
+ALLOWED_HOSTS = ['*']
 
 
 INSTALLED_APPS = [
@@ -22,13 +26,14 @@ INSTALLED_APPS = [
     'api.apps.ApiConfig',
     'recipes.apps.RecipesConfig',
     'django_extensions',
-
+    'corsheaders',
 ]
 
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
+    'corsheaders.middleware.CorsMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
@@ -39,11 +44,10 @@ MIDDLEWARE = [
 
 ROOT_URLCONF = 'backend.urls'
 
-TEMPLATES_DIR = BASE_DIR / 'templates'
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [TEMPLATES_DIR],
+        'DIRS': [],
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
@@ -59,12 +63,24 @@ TEMPLATES = [
 WSGI_APPLICATION = 'backend.wsgi.application'
 
 
-DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db.sqlite3',
+if os.getenv("USE_SQLITE", "false").lower() == "true":
+    DATABASES = {
+        'default': {
+            'ENGINE': 'django.db.backends.sqlite3',
+            'NAME': BASE_DIR / 'db.sqlite3',
+        }
     }
-}
+else:
+    DATABASES = {
+        'default': {
+            'ENGINE': 'django.db.backends.postgresql',
+            'NAME': os.getenv('POSTGRES_DB'),
+            'USER': os.getenv('POSTGRES_USER'),
+            'PASSWORD': os.getenv('POSTGRES_PASSWORD'),
+            'HOST': os.getenv('DB_HOST', 'db'),
+            'PORT': os.getenv('DB_PORT', '5432'),
+        }
+    }
 
 
 AUTH_PASSWORD_VALIDATORS = [
@@ -93,11 +109,13 @@ USE_L10N = True
 
 USE_TZ = True
 
-
-
 STATIC_URL = '/static/'
+STATIC_ROOT = BASE_DIR / 'collected_static'
 
-STATICFILES_DIRS = ((BASE_DIR / 'static/'),)
+MEDIA_URL = '/media/'
+MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
+
+CSV_FILES_DIR = BASE_DIR / 'recipes/data/'
 
 REST_FRAMEWORK = {
     'DEFAULT_PERMISSION_CLASSES': [
@@ -123,8 +141,8 @@ DJOSER = {
         'current_user': 'api.serializers.CustomUserSerializer',
     },
     'PERMISSIONS': {
-        'user': ['rest_framework.permissions.IsAuthenticated'],
-        'user_list': ['rest_framework.permissions.IsAdminUser'],
+        'user': ['rest_framework.permissions.AllowAny'],
+        'user_list': ['rest_framework.permissions.AllowAny'],
     },
 }
 
@@ -134,7 +152,10 @@ AUTH_USER_MODEL = 'recipes.User'
 
 #EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
 
-# CORS_ORIGIN_WHITELIST = [
-#     'http://localhost',
-#     'http://localhost:3000',
-# ]
+CORS_ORIGIN_ALLOW_ALL = True
+CORS_URLS_REGEX = r'^/api/.*$'
+
+CORS_ORIGIN_WHITELIST = [
+    #'http://localhost',
+    'http://localhost:3000',
+]

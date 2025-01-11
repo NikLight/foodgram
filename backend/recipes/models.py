@@ -10,7 +10,9 @@ class User(AbstractUser):
     username = models.CharField(max_length=150, unique=True)
     first_name = models.CharField(max_length=150)
     last_name = models.CharField(max_length=150)
-    avatar = models.ImageField(upload_to='profiles', blank=True, null=True, default=None)  # Аватар пользователя
+    avatar = models.ImageField(upload_to='profiles',
+                               blank=True, null=True,
+                               default=None)
 
     USERNAME_FIELD = 'email'
     REQUIRED_FIELDS = ['username']
@@ -43,7 +45,7 @@ class Ingredient(models.Model):
     Модель ингредиента.
     """
     name = models.CharField(max_length=200, unique=True)
-    measurement_unit = models.CharField(max_length=50)  # Единица измерения (г, мл, шт и т.д.)
+    measurement_unit = models.CharField(max_length=50)
 
     class Meta:
         verbose_name = "Ингредиент"
