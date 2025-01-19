@@ -23,5 +23,8 @@ RUN mkdir -p /media /backend_static/static /docs && \
     cp -r /app/collected_static/. /backend_static/static/ && \
     cp -r /app/docs/. /docs/
 
+RUN python manage.py import_ingredients
+RUN python manage.py import_tags
+
 
 CMD ["gunicorn", "--bind", "0.0.0.0:8000", "backend.wsgi"]

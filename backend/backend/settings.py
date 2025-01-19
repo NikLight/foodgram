@@ -27,6 +27,7 @@ INSTALLED_APPS = [
     'recipes.apps.RecipesConfig',
     'django_extensions',
     'corsheaders',
+    'django_filters',
 ]
 
 
@@ -47,7 +48,7 @@ ROOT_URLCONF = 'backend.urls'
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [],
+        'DIRS': [os.path.join(BASE_DIR, 'docs')],
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
@@ -129,6 +130,8 @@ REST_FRAMEWORK = {
     'DEFAULT_PAGINATION_CLASS': 'rest_framework.pagination.PageNumberPagination',
     'PAGE_SIZE': 6,
     'PAGINATE_BY_PARAM': 'limit',
+
+    'DEFAULT_FILTER_BACKENDS': ['django_filters.rest_framework.DjangoFilterBackend'],
 }
 
 DJOSER = {
@@ -159,3 +162,36 @@ CORS_ORIGIN_WHITELIST = [
     #'http://localhost',
     'http://localhost:3000',
 ]
+
+LOGGING = {
+    'version': 1,
+    'disable_existing_loggers': False,
+    'handlers': {
+        'console': {
+            'level': 'DEBUG',
+            'class': 'logging.StreamHandler',
+            'formatter': 'verbose',  # используем подробный формат
+        },
+    },
+    'loggers': {
+        'django': {
+            'handlers': ['console'],
+            'level': 'WARNING',  # Django логирует только предупреждения и ошибки
+            'propagate': False,
+        },
+        'myapp.views': {  # Логгер для вашего приложения (например, views)
+            'handlers': ['console'],
+            'level': 'DEBUG',  # Логирование всех сообщений от этого модуля
+            'formatter': 'verbose',
+            'propagate': False,
+        },
+    },
+    'formatters': {
+        'verbose': {
+            'format': '{levelname} {asctime} {module} {message}',
+            'style': '{',
+        },
+    },
+}
+
+
