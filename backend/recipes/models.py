@@ -59,12 +59,17 @@ class Recipe(models.Model):
     """
     Модель рецепта.
     """
-    name = models.CharField(max_length=200, blank=False, null=False)
-    text = models.TextField(blank=False, null=False)
+    name = models.CharField(
+        max_length=200, blank=False, null=False)
+    text = models.TextField(
+        blank=False, null=False)
     cooking_time = models.PositiveIntegerField()  # Время приготовления (в минутах)
-    image = models.ImageField(upload_to='recipes/', blank=True, null=True)  # Картинка рецепта
-    author = models.ForeignKey(User, on_delete=models.CASCADE, related_name='recipes')
-    tags = models.ManyToManyField(Tag, related_name='recipes')  # Теги рецепта
+    image = models.ImageField(
+        upload_to='recipes/', blank=True, null=True)  # Картинка рецепта
+    author = models.ForeignKey(
+        User, on_delete=models.CASCADE, related_name='recipes')
+    tags = models.ManyToManyField(
+        Tag, through='RecipeTag', related_name='recipes')  # Теги рецепта
     ingredients = models.ManyToManyField(
         Ingredient,
         through='IngredientInRecipe',
@@ -83,10 +88,15 @@ class RecipeTag(models.Model):
     """
     Модель для тегов рецептов.
     """
-    recipe = models.ForeignKey(Recipe, on_delete=models.CASCADE, related_name='recipe')
-    tag = models.ForeignKey(Tag, on_delete=models.CASCADE, related_name='tags')
+    recipe = models.ForeignKey(
+        Recipe, on_delete=models.CASCADE,
+        )
+    tag = models.ForeignKey(
+        Tag, on_delete=models.CASCADE,
+        )
 
     class Meta:
+        ordering = ('recipe', 'tag')
         unique_together = ('recipe', 'tag')  # Уникальная связь тега и рецепта
         verbose_name = "Тег рецепта"
         verbose_name_plural = "Теги рецептов"
