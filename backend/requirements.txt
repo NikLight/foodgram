@@ -13,3 +13,5 @@ PyYAML==6.0
 python-dotenv
 django-extensions
 django-filter
+reportlab
+hashlib
