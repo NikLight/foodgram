@@ -14,4 +14,4 @@ python-dotenv
 django-extensions
 django-filter
 reportlab
-hashlib
+short_url
