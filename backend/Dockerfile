@@ -6,25 +6,19 @@ RUN pip install gunicorn==20.1.0
 
 COPY requirements.txt .
 
+RUN pip install --upgrade pip
 RUN pip install -r requirements.txt --no-cache-dir
 
 COPY . .
 
-RUN python manage.py makemigrations
-RUN python manage.py migrate --noinput
-
-
-RUN python manage.py collectstatic --no-input --clear
-
-
-RUN mkdir -p /media /backend_static/static /docs && \
-    chown -R root:root /media /backend_static/static /docs && \
-    cp -r /app/media/. /media/ && \
-    cp -r /app/collected_static/. /backend_static/static/ && \
-    cp -r /app/docs/. /docs/
-
-RUN python manage.py import_ingredients
-RUN python manage.py import_tags
-
-
-CMD ["gunicorn", "--bind", "0.0.0.0:8000", "backend.wsgi"]
+CMD ["sh", "-c", "python manage.py makemigrations  && \
+                   python manage.py migrate --noinput && \
+                   python manage.py collectstatic --no-input --clear --verbosity 2 && \
+                   cp -r /app/media/. /media/ && \
+                   cp -r /app/collected_static/. /backend_static/static/ && \
+                   cp -r /app/docs/. /docs/ && \
+                   python manage.py create_superusers && \
+                   python manage.py import_ingredients && \
+                   python manage.py import_tags && \
+                   python manage.py import_recipes && \
+                   gunicorn --bind 0.0.0.0:8000 backend.wsgi"]

@@ -3,4 +3,3 @@ venv
 db.sqlite3
 .idea
 ../.env
-collected_static

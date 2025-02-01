@@ -1,6 +1,6 @@
 from django.contrib.auth import get_user_model
-from django.http import HttpResponse, HttpRequest
-from django.shortcuts import get_object_or_404
+from django.http import HttpResponse, HttpRequest, Http404
+from django.shortcuts import get_object_or_404, redirect
 from djoser.views import UserViewSet as DjoserViewSet
 from rest_framework import status, viewsets
 from rest_framework.exceptions import ValidationError, PermissionDenied
@@ -35,16 +35,24 @@ from reportlab.pdfbase import pdfmetrics
 from reportlab.pdfbase.ttfonts import TTFont
 from io import BytesIO
 import hashlib
+import short_url
+
 
 User = get_user_model()
 
 def generate_short_link(request, recipe_id):
-    hash_object = hashlib.md5(str(recipe_id).encode())
-    hex_digest = hash_object.hexdigest()
-    short_code = hex_digest[:7]
+    short_code = short_url.encode_url(recipe_id)  # Генерируем обратимо кодируемый ID
 
     base_url = request.build_absolute_uri('/')[:-1]
     return f"{base_url}/s/{short_code}"
+
+def redirect_to_recipe(request, s):
+    try:
+        pk = short_url.decode_url(s)
+        recipe = get_object_or_404(Recipe, pk=pk)  # Проверяем существование рецепта
+        return redirect(f'/recipes/{recipe.pk}/')
+    except ValueError:
+        raise Http404("Неверный короткий URL")
 
 
 class UserViewSet(DjoserViewSet):
@@ -193,9 +201,6 @@ class RecipeViewSet(viewsets.ModelViewSet):
 
     filterset_class = RecipeFilter
 
-    def get_queryset(self):
-        return Recipe.objects.all().order_by('-pub_date')
-
     def perform_create(self, serializer):
         serializer.save(author=self.request.user)
 
@@ -205,7 +210,7 @@ class RecipeViewSet(viewsets.ModelViewSet):
         return super().get_permissions()
 
     @action(detail=True, methods=['post', 'delete'], url_path='favorite', permission_classes=[IsAuthenticated])
-    def manage_favorite(self, request, pk=None):
+    def manage_favorite(self, request, pk):
 
         user = request.user
         recipe = get_object_or_404(Recipe, pk=pk)
@@ -234,7 +239,7 @@ class RecipeViewSet(viewsets.ModelViewSet):
             )
 
     @action(detail=True, methods=['post', 'delete'], url_path='shopping_cart', permission_classes=[IsAuthenticated])
-    def manage_shopping_cart(self, request, pk=None):
+    def manage_shopping_cart(self, request, pk):
         user = request.user
         recipe = get_object_or_404(Recipe, pk=pk)
 
