@@ -1,15 +1,20 @@
 from django.contrib.auth.models import AbstractUser
 from django.db import models
-
+from .constants import (MAX_LENGTH,
+                       MAX_LENGTH_ROLE,
+                       MAX_LENGTH_TAG,
+                       MAX_LENGTH_INGREDIENT,
+                       MAX_LENGTH_MEASURMENT_UNIT,
+                       MAX_LENGTH_RECIPE)
 
 class User(AbstractUser):
     """
     Модель пользователя.
     """
-    email = models.EmailField(max_length=254, unique=True)
-    username = models.CharField(max_length=150, unique=True)
-    first_name = models.CharField(max_length=150)
-    last_name = models.CharField(max_length=150)
+    email = models.EmailField(max_length=MAX_LENGTH, unique=True)
+    username = models.CharField(max_length=MAX_LENGTH_ROLE, unique=True)
+    first_name = models.CharField(max_length=MAX_LENGTH_ROLE)
+    last_name = models.CharField(max_length=MAX_LENGTH_ROLE)
     avatar = models.ImageField(upload_to='profiles',
                                blank=True, null=True,
                                default=None)
@@ -29,8 +34,8 @@ class Tag(models.Model):
     """
     Модель тега рецепта.
     """
-    name = models.CharField(max_length=100, unique=True)
-    slug = models.SlugField(max_length=100, unique=True)
+    name = models.CharField(max_length=MAX_LENGTH_TAG, unique=True)
+    slug = models.SlugField(max_length=MAX_LENGTH_TAG, unique=True)
 
     class Meta:
         verbose_name = "Тег"
@@ -44,8 +49,8 @@ class Ingredient(models.Model):
     """
     Модель ингредиента.
     """
-    name = models.CharField(max_length=200, unique=True)
-    measurement_unit = models.CharField(max_length=50)
+    name = models.CharField(max_length=MAX_LENGTH_INGREDIENT, unique=True)
+    measurement_unit = models.CharField(max_length=MAX_LENGTH_MEASURMENT_UNIT)
 
     class Meta:
         verbose_name = "Ингредиент"
@@ -60,22 +65,23 @@ class Recipe(models.Model):
     Модель рецепта.
     """
     name = models.CharField(
-        max_length=200, blank=False, null=False)
+        max_length=MAX_LENGTH_RECIPE, blank=False, null=False)
     text = models.TextField(
         blank=False, null=False)
-    cooking_time = models.PositiveIntegerField()  # Время приготовления (в минутах)
+    cooking_time = models.PositiveIntegerField()
     image = models.ImageField(
-        upload_to='recipes/', blank=True, null=True)  # Картинка рецепта
+        upload_to='recipes/', blank=True, null=True)
     author = models.ForeignKey(
         User, on_delete=models.CASCADE, related_name='recipes')
     tags = models.ManyToManyField(
-        Tag, through='RecipeTag', related_name='recipes')  # Теги рецепта
+        Tag, through='RecipeTag', related_name='recipes')
     ingredients = models.ManyToManyField(
         Ingredient,
         through='IngredientInRecipe',
         related_name='recipes'
-    )  # Ингредиенты через промежуточную таблицу
-    pub_date = models.DateTimeField('Дата публикации', auto_now_add=True)
+    )
+    pub_date = models.DateTimeField('Дата публикации',
+                                    auto_now_add=True)
 
     class Meta:
         verbose_name = "Рецепт"
@@ -97,7 +103,7 @@ class RecipeTag(models.Model):
 
     class Meta:
         ordering = ('recipe', 'tag')
-        unique_together = ('recipe', 'tag')  # Уникальная связь тега и рецепта
+        unique_together = ('recipe', 'tag')
         verbose_name = "Тег рецепта"
         verbose_name_plural = "Теги рецептов"
 
@@ -109,12 +115,14 @@ class IngredientInRecipe(models.Model):
     """
     Промежуточная модель для связи ингредиентов и рецептов.
     """
-    recipe = models.ForeignKey(Recipe, on_delete=models.CASCADE, related_name='ingredient_amounts')
-    ingredient = models.ForeignKey(Ingredient, on_delete=models.CASCADE, related_name='ingredient_amounts')
-    amount = models.PositiveIntegerField()  # Количество ингредиента в рецепте
+    recipe = models.ForeignKey(Recipe, on_delete=models.CASCADE,
+                               related_name='ingredient_amounts')
+    ingredient = models.ForeignKey(Ingredient, on_delete=models.CASCADE,
+                                   related_name='ingredient_amounts')
+    amount = models.PositiveIntegerField()
 
     class Meta:
-        unique_together = ('recipe', 'ingredient')  # Уникальная связь ингредиента и рецепта
+        unique_together = ('recipe', 'ingredient')
         verbose_name = "Ингредиент в рецепте"
         verbose_name_plural = "Ингредиенты в рецептах"
 
@@ -126,11 +134,13 @@ class FavoriteRecipe(models.Model):
     """
     Модель для избранных рецептов.
     """
-    user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='favorite_recipes')
-    recipe = models.ForeignKey(Recipe, on_delete=models.CASCADE, related_name='favorites')
+    user = models.ForeignKey(User, on_delete=models.CASCADE,
+                             related_name='favorite_recipes')
+    recipe = models.ForeignKey(Recipe, on_delete=models.CASCADE,
+                               related_name='favorites')
 
     class Meta:
-        unique_together = ('user', 'recipe')  # Уникальная пара user-рецепт
+        unique_together = ('user', 'recipe')
         verbose_name = "Избранный рецепт"
         verbose_name_plural = "Избранные рецепты"
 
@@ -142,11 +152,13 @@ class ShoppingCart(models.Model):
     """
     Модель для списка покупок.
     """
-    user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='shopping_cart')
-    recipe = models.ForeignKey(Recipe, on_delete=models.CASCADE, related_name='in_cart')
+    user = models.ForeignKey(User, on_delete=models.CASCADE,
+                             related_name='shopping_cart')
+    recipe = models.ForeignKey(Recipe, on_delete=models.CASCADE,
+                               related_name='in_cart')
 
     class Meta:
-        unique_together = ('user', 'recipe')  # Уникальная пара user-рецепт
+        unique_together = ('user', 'recipe')
         verbose_name = "Список покупок"
         verbose_name_plural = "Списки покупок"
 
@@ -157,11 +169,13 @@ class Subscription(models.Model):
     """
     Модель для подписок.
     """
-    user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='follower')
-    author = models.ForeignKey(User, on_delete=models.CASCADE, related_name='following')
+    user = models.ForeignKey(User, on_delete=models.CASCADE,
+                             related_name='follower')
+    author = models.ForeignKey(User, on_delete=models.CASCADE,
+                               related_name='following')
 
     class Meta:
-        unique_together = ('user', 'author')  # Уникальная пара user-автор
+        unique_together = ('user', 'author')
         verbose_name = "Подписка"
         verbose_name_plural = "Подписки"
 

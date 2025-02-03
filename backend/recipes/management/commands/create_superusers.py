@@ -3,7 +3,6 @@ import csv
 import os
 from django.core.management.base import BaseCommand
 
-# Получаем кастомную модель пользователя
 User = get_user_model()
 
 
@@ -27,13 +26,12 @@ class Command(BaseCommand):
                     password = row['password'].strip()
                     first_name = row.get('first_name', '').strip()
                     last_name = row.get('last_name', '').strip()
-                    avatar = row.get('avatar', '').strip()  # Если вы хотите импортировать аватар
+                    avatar = row.get('avatar', '').strip()
 
                     if User.objects.filter(email=email).exists():
                         self.stdout.write(self.style.WARNING(f'Пользователь с email "{email}" уже существует. Пропускаем.'))
                         continue
 
-                    # Создаем суперпользователя
                     user = User.objects.create_superuser(
                         email=email,
                         username=username,
@@ -42,7 +40,6 @@ class Command(BaseCommand):
                     user.first_name = first_name
                     user.last_name = last_name
 
-                    # Если указан аватар, добавляем его
                     if avatar:
                         user.avatar = avatar
 

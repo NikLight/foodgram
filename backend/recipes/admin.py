@@ -12,20 +12,27 @@ class UserAdmin(BaseUserAdmin):
     Админка для модели пользователя.
     """
     model = User
-    list_display = ('id', 'email', 'username', 'first_name', 'last_name', 'is_staff', 'is_active')
+    list_display = ('id', 'email', 'username',
+                    'first_name', 'last_name', 'is_staff',
+                    'is_active')
     list_filter = ('is_staff', 'is_active')
-    search_fields = ('email', 'username', 'first_name', 'last_name')
+    search_fields = ('email', 'username',
+                     'first_name', 'last_name')
     ordering = ('id',)
     fieldsets = (
         (None, {'fields': ('email', 'username', 'password')}),
-        ('Персональная информация', {'fields': ('first_name', 'last_name', 'avatar')}),
-        ('Права доступа', {'fields': ('is_staff', 'is_active', 'is_superuser', 'groups', 'user_permissions')}),
+        ('Персональная информация', {'fields': ('first_name', 'last_name',
+                                                'avatar')}),
+        ('Права доступа', {'fields': ('is_staff', 'is_active',
+                                      'is_superuser', 'groups',
+                                      'user_permissions')}),
         ('Важные даты', {'fields': ('last_login', 'date_joined')}),
     )
     add_fieldsets = (
         (None, {
             'classes': ('wide',),
-            'fields': ('email', 'username', 'password1', 'password2', 'is_staff', 'is_active'),
+            'fields': ('email', 'username', 'password1',
+                       'password2', 'is_staff', 'is_active'),
         }),
     )
 
@@ -112,4 +119,3 @@ class SubscriptionAdmin(admin.ModelAdmin):
     list_display = ('id', 'user', 'author')
     search_fields = ('user__username', 'author__username')
     ordering = ('id',)
-
