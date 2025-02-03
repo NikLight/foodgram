@@ -1,7 +1,7 @@
 name,text,cooking_time,image,author_id,tags,ingredients
-"Нечто съедобное","Приготовьте как-нибудь эти ингредиенты",5,"data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABAgMAAABieywaAAAACVBMVEUAAAD///9fX1/S0ecCAAAACXBIWXMAAA7EAAAOxAGVKw4bAAAACklEQVQImWNoAAAAggCByxOyYQAAAABJRU5ErkJggg==",1,"1;2","1:100;2:200"
-"Быстрый завтрак","Смешайте ингредиенты и подавайте",10,"data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABAgMAAABieywaAAAACVBMVEUAAAD///9fX1/S0ecCAAAACXBIWXMAAA7EAAAOxAGVKw4bAAAACklEQVQImWNoAAAAggCByxOyYQAAAABJRU5ErkJggg==",2,"3;4","3:50;4:30"
-"Салат Оливье","Смешайте овощи, майонез и подавайте на стол",20,"data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABAgMAAABieywaAAAACVBMVEUAAAD///9fX1/S0ecCAAAACXBIWXMAAA7EAAAOxAGVKw4bAAAACklEQVQImWNoAAAAggCByxOyYQAAAABJRU5ErkJggg==",3,"2;5","5:300;6:150"
-"Шоколадный торт","Приготовьте тесто, выпекайте и украсьте кремом",60,"data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABAgMAAABieywaAAAACVBMVEUAAAD///9fX1/S0ecCAAAACXBIWXMAAA7EAAAOxAGVKw4bAAAACklEQVQImWNoAAAAggCByxOyYQAAAABJRU5ErkJggg==",4,"4;6","7:500;8:100;9:200"
-"Смузи Манго","Смешайте манго, банан, апельсиновый сок в блендере",5,"data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABAgMAAABieywaAAAACVBMVEUAAAD///9fX1/S0ecCAAAACXBIWXMAAA7EAAAOxAGVKw4bAAAACklEQVQImWNoAAAAggCByxOyYQAAAABJRU5ErkJggg==",2,"1;3","10:150;11:200;12:50"
-"Суп Борщ","Сварите овощи, добавьте свеклу и специи, подавайте горячим",40,"data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABAgMAAABieywaAAAACVBMVEUAAAD///9fX1/S0ecCAAAACXBIWXMAAA7EAAAOxAGVKw4bAAAACklEQVQImWNoAAAAggCByxOyYQAAAABJRU5ErkJggg==",1,"5;6","13:500;14:300;15:200;16:100"
+"Нечто съедобное","Приготовьте как-нибудь эти ингредиенты",5,"recipe1.jpg",1,"1;2","1:100;2:200"
+"Быстрый завтрак","Смешайте ингредиенты и подавайте",10,"recipe2.jpg",2,"3;4","3:50;4:30"
+"Салат Оливье","Смешайте овощи, майонез и подавайте на стол",20,"recipe3.jpg",3,"2;5","5:300;6:150"
+"Шоколадный торт","Приготовьте тесто, выпекайте и украсьте кремом",60,"recipe4.jpg",4,"4;6","7:500;8:100;9:200"
+"Смузи Манго","Смешайте манго, банан, апельсиновый сок в блендере",5,"recipe5.jpg",2,"1;3","10:150;11:200;12:50"
+"Суп Борщ","Сварите овощи, добавьте свеклу и специи, подавайте горячим",40,"recipe6.jpg",1,"5;6","13:500;14:300;15:200;16:100"
