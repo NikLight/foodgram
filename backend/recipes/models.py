@@ -1,11 +1,10 @@
 from django.contrib.auth.models import AbstractUser
 from django.db import models
-from .constants import (MAX_LENGTH,
-                       MAX_LENGTH_ROLE,
-                       MAX_LENGTH_TAG,
-                       MAX_LENGTH_INGREDIENT,
-                       MAX_LENGTH_MEASURMENT_UNIT,
-                       MAX_LENGTH_RECIPE)
+
+from .constants import (MAX_LENGTH, MAX_LENGTH_INGREDIENT,
+                        MAX_LENGTH_MEASURMENT_UNIT, MAX_LENGTH_RECIPE,
+                        MAX_LENGTH_ROLE, MAX_LENGTH_TAG)
+
 
 class User(AbstractUser):
     """
@@ -90,16 +89,15 @@ class Recipe(models.Model):
     def __str__(self):
         return self.name
 
+
 class RecipeTag(models.Model):
     """
     Модель для тегов рецептов.
     """
     recipe = models.ForeignKey(
-        Recipe, on_delete=models.CASCADE,
-        )
+        Recipe, on_delete=models.CASCADE,)
     tag = models.ForeignKey(
-        Tag, on_delete=models.CASCADE,
-        )
+        Tag, on_delete=models.CASCADE,)
 
     class Meta:
         ordering = ('recipe', 'tag')
@@ -163,7 +161,9 @@ class ShoppingCart(models.Model):
         verbose_name_plural = "Списки покупок"
 
     def __str__(self):
-        return f"{self.recipe.name} в списке покупок у {self.user.username}"
+        return (f"{self.recipe.name} в списке покупок"
+                f" у {self.user.username}")
+
 
 class Subscription(models.Model):
     """

@@ -1,9 +1,8 @@
 from django.contrib import admin
 from django.contrib.auth.admin import UserAdmin as BaseUserAdmin
-from .models import (
-    User, Tag, Ingredient, Recipe, RecipeTag,
-    IngredientInRecipe, FavoriteRecipe, ShoppingCart, Subscription
-)
+
+from .models import (FavoriteRecipe, Ingredient, IngredientInRecipe, Recipe,
+                     RecipeTag, ShoppingCart, Subscription, Tag, User)
 
 
 @admin.register(User)
