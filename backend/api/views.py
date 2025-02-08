@@ -1,55 +1,44 @@
 import os
-import requests
-import short_url
 from io import BytesIO
 
+import requests
+import short_url
 from django.contrib.auth import get_user_model
-from django.http import HttpResponse, Http404
+from django.http import Http404, HttpResponse
 from django.shortcuts import get_object_or_404, redirect
 from djoser.views import UserViewSet as DjoserViewSet
-from rest_framework import status, viewsets
-from rest_framework.exceptions import ValidationError
-from rest_framework.permissions import (IsAuthenticated,
-                                        AllowAny)
-from rest_framework.response import Response
-from rest_framework.decorators import action
-from rest_framework.viewsets import ReadOnlyModelViewSet
-
-from .filters import RecipeFilter
-from .pagination import CustomPagination
-
-from recipes.constants import FreeSans_Link
-from recipes.models import (Recipe,
-                            Tag,
-                            Ingredient,
-                            Subscription,
-                            FavoriteRecipe,
-                            ShoppingCart,
-                            IngredientInRecipe)
-from .permissions import IsAuthorOrAdmin
-
-from .serializers import (CustomUserSerializer,
-                          Base64ImageField,
-                          TagSerializer,
-                          IngredientSerializer,
-                          SubscriptionUserSerializer,
-                          RecipeShortSerializer,
-                          RecipeCreateSerializer,
-                          RecipeGetSerializer)
-
-from reportlab.pdfgen import canvas
 from reportlab.lib.pagesizes import letter
 from reportlab.pdfbase import pdfmetrics
 from reportlab.pdfbase.ttfonts import TTFont
+from reportlab.pdfgen import canvas
+from rest_framework import status, viewsets
+from rest_framework.decorators import action
+from rest_framework.exceptions import ValidationError
+from rest_framework.permissions import AllowAny, IsAuthenticated
+from rest_framework.response import Response
+from rest_framework.viewsets import ReadOnlyModelViewSet
 
+from recipes.constants import FreeSans_Link
+from recipes.models import (FavoriteRecipe, Ingredient, IngredientInRecipe,
+                            Recipe, ShoppingCart, Subscription, Tag)
+
+from .filters import RecipeFilter
+from .pagination import CustomPagination
+from .permissions import IsAuthorOrAdmin
+from .serializers import (Base64ImageField, CustomUserSerializer,
+                          IngredientSerializer, RecipeCreateSerializer,
+                          RecipeGetSerializer, RecipeShortSerializer,
+                          SubscriptionUserSerializer, TagSerializer)
 
 User = get_user_model()
+
 
 def generate_short_link(request, recipe_id):
     short_code = short_url.encode_url(recipe_id)
 
     base_url = request.build_absolute_uri('/')[:-1]
     return f"{base_url}/s/{short_code}"
+
 
 def redirect_to_recipe(request, s):
     try:
@@ -154,20 +143,23 @@ class UserViewSet(DjoserViewSet):
                     recipes = recipes[:recipes_limit]
                 except ValueError:
                     return Response(
-                        {"detail": "Неверное значение параметра 'recipes_limit'."},
+                        {"detail": "Неверное значение параметра"
+                                   " 'recipes_limit'."},
                         status=status.HTTP_400_BAD_REQUEST
                     )
 
             serializer = SubscriptionUserSerializer(
                 author, context={'request': request})
             response_data = serializer.data
-            response_data['recipes'] = RecipeShortSerializer(recipes, many=True).data
+            response_data['recipes'] = RecipeShortSerializer(
+                recipes, many=True).data
 
             return Response(response_data,
                             status=status.HTTP_201_CREATED)
 
         elif request.method == 'DELETE':
-            subscription = Subscription.objects.filter(user=user, author=author).first()
+            subscription = Subscription.objects.filter(user=user,
+                                                       author=author).first()
             if not subscription:
                 return Response(
                     {"detail": "Вы не подписаны на этого пользователя."},
@@ -343,7 +335,8 @@ class RecipeViewSet(viewsets.ModelViewSet):
                 ingredient = ingredient_in_recipe.ingredient
                 amount = ingredient_in_recipe.amount
                 p.drawString(
-                    70, y, f'- {ingredient.name}: {amount} {ingredient.measurement_unit}')
+                    70, y, f'- {ingredient.name}:'
+                           f' {amount} {ingredient.measurement_unit}')
                 y -= 15
             y -= 5
 
@@ -353,7 +346,8 @@ class RecipeViewSet(viewsets.ModelViewSet):
         buffer.seek(0)
 
         response = HttpResponse(buffer, content_type='application/pdf')
-        response['Content-Disposition'] = 'attachment; filename="shopping_cart.pdf"'
+        response[
+            'Content-Disposition'] = 'attachment; filename="shopping_cart.pdf"'
 
         return response
 
@@ -365,6 +359,7 @@ class RecipeViewSet(viewsets.ModelViewSet):
 
         return Response({'short_link': short_link},
                         status=status.HTTP_200_OK)
+
 
 def get_and_register_font(font_name, font_url, local_path):
     """
@@ -379,5 +374,7 @@ def get_and_register_font(font_name, font_url, local_path):
             with open(local_path, 'wb') as f:
                 f.write(response.content)
         else:
-            raise Exception(f"Ошибка скачивания шрифта. Код ответа: {response.status_code}")
+            raise Exception(
+                f"Ошибка скачивания шрифта. "
+                f"Код ответа: {response.status_code}")
     pdfmetrics.registerFont(TTFont(font_name, local_path))

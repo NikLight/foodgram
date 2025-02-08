@@ -6,4 +6,6 @@ MAX_LENGTH_INGREDIENT = 200
 MAX_LENGTH_MEASURMENT_UNIT = 50
 MAX_LENGTH_RECIPE = 200
 USERNAME_SEARCH_REGEX = r'^[\w.@+-]+\Z'
-FreeSans_Link = "https://raw.githubusercontent.com/opensourcedesign/fonts/master/gnu-freefont_freesans/FreeSans.ttf"
+FreeSans_Link = ("https://raw.githubusercontent.com/"
+                 "opensourcedesign/fonts/master/"
+                 "gnu-freefont_freesans/FreeSans.ttf")
