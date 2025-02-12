@@ -1,71 +1,159 @@
 # Сайт рецептов
 
-Этот проект представляет собой веб-сайт для обмена рецептами, где пользователи могут создавать, просматривать и сохранять свои любимые рецепты.
+Сервис для обмена рецептами, где пользователи могут создавать, просматривать, 
+редактировать и сохранять свои любимые рецепты.
 
-## Используемые технологии
+## Ссылка на работающий сайт
 
+[https://foodgramya.hopto.org](https://foodgramya.hopto.org)
 
-*   **Python:** Язык программирования, используемый для создания серверной части приложения.
-*   **Django:** Веб-фреймворк, используемый для разработки серверной части.
-*   **Django REST Framework:** Инструмент для создания API, используемого для взаимодействия с фронтендом.
-*   **PostgreSQL:** База данных, используемая для хранения информации о рецептах, пользователях и других данных.
-*   **Nginx:** Веб-сервер, используемый для обслуживания статических файлов и обработки запросов к API.
-*   **Gunicorn:** WSGI-сервер, используемый для запуска Django-приложения.
-*   **Docker:** Инструмент для контейнеризации приложения и его зависимостей.
-*   **GitHub Actions:** Сервис для автоматизации сборки, тестирования и развертывания приложения.
+## Автор
 
-## Структура моделей
+*   ФИО: *Ваше ФИО*
+*   GitHub: [https://github.com/niklight](https://github.com/niklight)
 
-В проекте используются следующие модели Django:
+## Технологический стек
 
+*   **Python:** Язык программирования, используемый для серверной части приложения.
+*   **Django:** Web-фреймворк для разработки серверной части.
+*   **Django REST Framework:** Инструмент для создания API.
+*   **PostgreSQL:** База данных.
+*   **Nginx:** Web-сервер.
+*   **Gunicorn:** WSGI-сервер.
+*   **Docker:** Инструмент контейнеризации.
+*   **GitHub Actions:** Сервис CI/CD.
 
-*   **User:** Модель пользователя, содержащая информацию о пользователе, такую как имя пользователя, email, пароль и другие поля.
-*   **Tag:** Модель тега, содержащая название тега.
-*   **Ingredient:** Модель ингредиента, содержащая название ингредиента и единицу измерения.
-*   **Recipe:** Модель рецепта, содержащая название рецепта, описание, время приготовления, изображение, автора (связь с моделью User), теги (связь с моделью Tag) и ингредиенты (связь с моделью Ingredient через промежуточную модель IngredientInRecipe).
-*   **IngredientInRecipe:** Промежуточная модель, описывающая количество ингредиента в рецепте. Содержит связь с моделями Ingredient и Recipe, а также поле amount для хранения количества ингредиента.
-*   **RecipeTag:** Промежуточная модель для связи рецептов с тегами.
-*   **Subscription:** Модель для хранения информации о подписках пользователей на авторов рецептов.
-*   **FavoriteRecipe:** Модель для хранения информации о добавлении рецептов в избранное пользователями.
-*   **ShoppingCart:** Модель для хранения информации о добавлении рецептов в список покупок пользователями.
+## CI/CD (GitHub Actions)
 
-## Установка и запуск
+Описание workflow развертывания приложения на сервере. 
+*(Опишите ваш workflow, например: 
+"Workflow автоматически запускается при каждом push в ветку `main`, 
+собирает Docker образ, 
+запускает тесты и разворачивает приложение на сервере.")*
 
-1.  Клонируйте репозиторий:
+## Локальное развертывание с Docker
+
+1.  Клонирование репозитория:
 
     ```bash
-    git clone [https://github.com/ваш-логин/foodgram.git](https://www.google.com/search?q=https://github.com/%D0%B2%D0%B0%D1%88-%D0%BB%D0%BE%D0%B3%D0%B8%D0%BD/foodgram.git)
+    git clone [https://github.com/ваш-логин/foodgram.git](https://github.com/niklight/foodgram.git)
     ```
 
-2.  Создайте виртуальное окружение:
+2.  Переход в папку с `docker-compose.yml`:
+
+    ```bash
+    cd foodgram
+    ```
+
+3.  Заполнение `.env`:
+
+    Создайте файл `.env` в корневой папке проекта и заполните его переменными окружения. Пример:
+
+    ```
+    POSTGRES_NAME=foodgram_db
+    POSTGRES_USER=foodgram
+    POSTGRES_PASSWORD=your_password
+    POSTGRES_HOST=db
+    POSTGRES_PORT=5432
+    SECRET_KEY=your_secret_key
+    ```
+
+4.  Подъем контейнеров:
+
+    ```bash
+    docker-compose up -d --build
+    ```
+
+5.  Подготовка базы данных:
+
+    ```bash
+    docker-compose exec web python manage.py migrate
+    docker-compose exec web python manage.py createsuperuser # Опционально
+    docker-compose exec web python manage.py import_ingredients  # Опционально
+    docker-compose exec web python manage.py import_recipes  # Опционально
+    docker-compose exec web python manage.py import_tags  # Опционально
+    ```
+
+6.  Сборка статики:
+
+    ```bash
+    docker-compose exec web python manage.py collectstatic --noinput
+    ```
+
+7.  Запуск сервера:
+
+    Сервер будет доступен по адресу `https://foodgramya.hopto.org`.
+
+## Локальное развертывание без Docker
+
+1.  Клонирование репозитория:
+
+    ```bash
+    git clone [https://github.com/ваш-логин/foodgram.git](https://github.com/niklight/foodgram.git)
+    ```
+
+2.  Переход в папку проекта:
+
+    ```bash
+    cd foodgram
+    ```
+
+3.  Создание виртуального окружения:
 
     ```bash
     python3 -m venv .venv
     ```
 
-3.  Активируйте виртуальное окружение:
+4.  Активация виртуального окружения:
 
     ```bash
-    source .venv/bin/activate
+    source .venv/bin/activate  # Linux/macOS
+    .venv\Scripts\activate  # Windows
     ```
 
-4.  Установите зависимости:
+5.  Установка зависимостей:
 
     ```bash
     pip install -r requirements.txt
     ```
 
-5.  Создайте базу данных:
+6.  Заполнение `.env`:
+
+    Создайте файл `.env` в корневой папке проекта и заполните его переменными окружения. Пример:
+
+    ```
+    POSTGRES_NAME=foodgram_db
+    POSTGRES_USER=foodgram
+    POSTGRES_PASSWORD=your_password
+    POSTGRES_HOST=localhost # или 127.0.0.1
+    POSTGRES_PORT=5432
+    SECRET_KEY=your_secret_key
+    # ... другие переменные
+    ```
+
+7.  Миграция базы данных и создание суперпользователя:
 
     ```bash
     python manage.py migrate
+    python manage.py createsuperuser # Опционально
     ```
 
-6.  Запустите сервер разработки:
+8.  Импорт данных (опционально):
+
+    ```bash
+    python manage.py loaddata fixtures.json # или fixtures.json
+    ```
+
+9.  Запуск сервера:
 
     ```bash
     python manage.py runserver
     ```
+
+10. Документация API:
+
+    После запуска сервера документация API будет доступна по адресу: 
+    `https://foodgramya.hopto.org/redoc/`
 
 ## API
 
@@ -80,9 +168,3 @@
 ## Лицензия
 
 MIT
-
-## Автор
-
-Yandex
-
----
