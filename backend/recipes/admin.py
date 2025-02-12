@@ -1,5 +1,6 @@
 from django.contrib import admin
 from django.contrib.auth.admin import UserAdmin as BaseUserAdmin
+from django.utils.html import format_html
 
 from .models import (FavoriteRecipe, Ingredient, IngredientInRecipe, Recipe,
                      RecipeTag, ShoppingCart, Subscription, Tag, User)
@@ -83,6 +84,11 @@ class RecipeAdmin(admin.ModelAdmin):
     search_fields = ('name', 'author__username', 'author__email')
     inlines = [IngredientInRecipeInline, RecipeTagInline]
     ordering = ('-pub_date',)
+
+    @admin.display(description='Изображение')
+    def display_image(self, obj):
+        if obj.image:
+            return format_html('<img src="{}" width="50" height="50" />', obj.image.url)
 
     def favorites_count(self, obj):
         """Отображает количество добавлений рецепта в избранное."""
