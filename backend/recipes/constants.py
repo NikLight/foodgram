@@ -9,3 +9,5 @@ USERNAME_SEARCH_REGEX = r'^[\w.@+-]+\Z'
 FreeSans_Link = ("https://raw.githubusercontent.com/"
                  "opensourcedesign/fonts/master/"
                  "gnu-freefont_freesans/FreeSans.ttf")
+PAGE_SIZE = 6
+MAX_PAGE_SIZE = 100

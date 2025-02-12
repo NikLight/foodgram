@@ -1,5 +1,6 @@
 from django.contrib.auth import get_user_model
 from django_filters import rest_framework as filters
+from django.db.models import Q
 
 from recipes.models import Recipe
 
@@ -34,3 +35,18 @@ class RecipeFilter(filters.FilterSet):
         if value and not user.is_anonymous:
             return queryset.filter(in_cart__user=user)
         return queryset
+
+
+class IngredientSearchFilter(filters.SearchFilter):
+    def filter_queryset(self, request, queryset, view):
+        search_param = request.query_params.get('search', '').strip()
+        if not search_param:
+            return queryset
+
+        starts_with = queryset.filter(name__istartswith=search_param)
+
+        contains = queryset.filter(
+            Q(name__icontains=search_param) & ~Q(id__in=starts_with.values('id'))
+        )
+
+        return starts_with.union(contains).order_by('name')
