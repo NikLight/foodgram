@@ -2,8 +2,8 @@
 
 Сервис для обмена рецептами, где пользователи могут создавать, просматривать, 
 редактировать и сохранять свои любимые рецепты.
+![Сайт рецептов](https://github.com/NikLight/foodgram/blob/main/1.jpg)
 
-## Ссылка на работающий сайт
 
 [https://foodgramya.hopto.org](https://foodgramya.hopto.org)
 
@@ -23,7 +23,11 @@
 *   **Docker:** Инструмент контейнеризации.
 *   **GitHub Actions:** Сервис CI/CD.
 
+
 ## CI/CD (GitHub Actions)
+=======
+
+![Сайт рецептов](https://github.com/NikLight/foodgram/blob/main/2.jpg)
 
 Описание workflow развертывания приложения на сервере. 
 *(Опишите ваш workflow, например: 
