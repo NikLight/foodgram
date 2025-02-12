@@ -1,7 +1,6 @@
 from django.contrib.auth import get_user_model
-from django_filters import rest_framework as filters
 from django.db.models import Q
-
+from django_filters import rest_framework as filters
 from recipes.models import Recipe
 
 User = get_user_model()
@@ -46,7 +45,8 @@ class IngredientSearchFilter(filters.SearchFilter):
         starts_with = queryset.filter(name__istartswith=search_param)
 
         contains = queryset.filter(
-            Q(name__icontains=search_param) & ~Q(id__in=starts_with.values('id'))
+            Q(name__icontains=search_param) & ~Q(
+                id__in=starts_with.values('id'))
         )
 
         return starts_with.union(contains).order_by('name')

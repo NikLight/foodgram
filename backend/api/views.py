@@ -7,6 +7,9 @@ from django.contrib.auth import get_user_model
 from django.http import Http404, HttpResponse
 from django.shortcuts import get_object_or_404, redirect
 from djoser.views import UserViewSet as DjoserViewSet
+from recipes.constants import FreeSans_Link
+from recipes.models import (FavoriteRecipe, Ingredient, IngredientInRecipe,
+                            Recipe, ShoppingCart, Subscription, Tag)
 from reportlab.lib.pagesizes import letter
 from reportlab.pdfbase import pdfmetrics
 from reportlab.pdfbase.ttfonts import TTFont
@@ -18,11 +21,7 @@ from rest_framework.permissions import AllowAny, IsAuthenticated
 from rest_framework.response import Response
 from rest_framework.viewsets import ReadOnlyModelViewSet
 
-from recipes.constants import FreeSans_Link
-from recipes.models import (FavoriteRecipe, Ingredient, IngredientInRecipe,
-                            Recipe, ShoppingCart, Subscription, Tag)
-
-from .filters import RecipeFilter, IngredientSearchFilter
+from .filters import IngredientSearchFilter, RecipeFilter
 from .pagination import CustomPagination
 from .permissions import IsAuthorOrAdmin
 from .serializers import (Base64ImageField, CustomUserSerializer,
@@ -137,7 +136,8 @@ class UserViewSet(DjoserViewSet):
         serializer = SubscriptionUserSerializer(
             author, context={'request': request})
         response_data = serializer.data
-        response_data['recipes'] = RecipeShortSerializer(recipes, many=True).data
+        response_data['recipes'] = RecipeShortSerializer(
+            recipes, many=True).data
 
         return Response(response_data, status=status.HTTP_201_CREATED)
 
@@ -183,17 +183,20 @@ class UserRecipeRelationMixin:
     not_exists_message = "Рецепт не найден."
 
     def add_relation(self, user, recipe):
-        if self.relation_model.objects.filter(user=user, recipe=recipe).exists():
+        if self.relation_model.objects.filter(user=user,
+                                              recipe=recipe).exists():
             return Response(
                 {"detail": self.already_exists_message},
                 status=status.HTTP_400_BAD_REQUEST
             )
         self.relation_model.objects.create(user=user, recipe=recipe)
-        serializer = RecipeShortSerializer(recipe, context={'request': self.request})
+        serializer = RecipeShortSerializer(recipe,
+                                           context={'request': self.request})
         return Response(serializer.data, status=status.HTTP_201_CREATED)
 
     def remove_relation(self, user, recipe):
-        relation_instance = self.relation_model.objects.filter(user=user, recipe=recipe).first()
+        relation_instance = self.relation_model.objects.filter(
+            user=user, recipe=recipe).first()
         if not relation_instance:
             return Response(
                 {"detail": self.not_exists_message},
@@ -225,7 +228,8 @@ class RecipeViewSet(viewsets.ModelViewSet, UserRecipeRelationMixin):
             self.permission_classes = [IsAuthorOrAdmin]
         return super().get_permissions()
 
-    @action(detail=True, methods=['post', 'delete'], url_path='favorite', permission_classes=[IsAuthenticated])
+    @action(detail=True, methods=['post', 'delete'], url_path='favorite',
+            permission_classes=[IsAuthenticated])
     def manage_favorite(self, request, pk=None):
         user = request.user
         recipe = get_object_or_404(Recipe, pk=pk)
@@ -240,7 +244,8 @@ class RecipeViewSet(viewsets.ModelViewSet, UserRecipeRelationMixin):
         elif request.method == 'DELETE':
             return self.remove_relation(user, recipe)
 
-    @action(detail=True, methods=['post', 'delete'], url_path='shopping_cart', permission_classes=[IsAuthenticated])
+    @action(detail=True, methods=['post', 'delete'], url_path='shopping_cart',
+            permission_classes=[IsAuthenticated])
     def manage_shopping_cart(self, request, pk=None):
         user = request.user
         recipe = get_object_or_404(Recipe, pk=pk)
