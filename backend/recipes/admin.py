@@ -88,7 +88,9 @@ class RecipeAdmin(admin.ModelAdmin):
     @admin.display(description='Изображение')
     def display_image(self, obj):
         if obj.image:
-            return format_html('<img src="{}" width="50" height="50" />', obj.image.url)
+            return format_html(
+                '<img src="{}" width="50" height="50" />',
+                obj.image.url)
 
     def favorites_count(self, obj):
         """Отображает количество добавлений рецепта в избранное."""

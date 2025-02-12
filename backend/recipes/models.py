@@ -128,15 +128,18 @@ class IngredientInRecipe(models.Model):
     def __str__(self):
         return f"{self.ingredient.name} ({self.amount}) для {self.recipe.name}"
 
+
 class UserRecipeRelation(models.Model):
     """
     Абстрактная модель для связи пользователя и рецепта.
     """
     user = models.ForeignKey(
-        User, on_delete=models.CASCADE, related_name="%(class)s_relations"
+        User, on_delete=models.CASCADE,
+        related_name="%(class)s_relations"
     )
     recipe = models.ForeignKey(
-        Recipe, on_delete=models.CASCADE, related_name="%(class)s_relations"
+        Recipe, on_delete=models.CASCADE,
+        related_name="%(class)s_relations"
     )
 
     class Meta:
@@ -147,6 +150,7 @@ class UserRecipeRelation(models.Model):
 
     def __str__(self):
         return f"{self.user.username} - {self.recipe.name}"
+
 
 class FavoriteRecipe(UserRecipeRelation):
     """
