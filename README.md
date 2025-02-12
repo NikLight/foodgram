@@ -27,8 +27,6 @@
 ## CI/CD (GitHub Actions)
 =======
 
-![Сайт рецептов](https://github.com/NikLight/foodgram/blob/main/2.jpg)
-
 Описание workflow развертывания приложения на сервере. 
 *(Опишите ваш workflow, например: 
 "Workflow автоматически запускается при каждом push в ветку `main`, 
@@ -69,6 +67,7 @@
     ```
 
 5.  Подготовка базы данных:
+![Сайт рецептов](https://github.com/NikLight/foodgram/blob/main/2.jpg)
 
     ```bash
     docker-compose exec web python manage.py migrate
