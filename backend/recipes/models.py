@@ -129,41 +129,82 @@ class IngredientInRecipe(models.Model):
         return f"{self.ingredient.name} ({self.amount}) для {self.recipe.name}"
 
 
-class FavoriteRecipe(models.Model):
+class UserRecipeRelation(models.Model):
+    """
+    Абстрактная модель для связи пользователя и рецепта.
+    """
+    user = models.ForeignKey(
+        User,
+        on_delete=models.CASCADE,
+        related_name="%(class)s_relations"
+    )
+    recipe = models.ForeignKey(
+        'Recipe',
+        on_delete=models.CASCADE,
+        related_name="%(class)s_relations"
+    )
+
+    class Meta:
+        abstract = True
+        unique_together = ('user', 'recipe')
+
+    def __str__(self):
+        return f"{self.user.username} - {self.recipe.name}"
+
+
+class FavoriteRecipe(UserRecipeRelation):
     """
     Модель для избранных рецептов.
     """
-    user = models.ForeignKey(User, on_delete=models.CASCADE,
-                             related_name='favorite_recipes')
-    recipe = models.ForeignKey(Recipe, on_delete=models.CASCADE,
-                               related_name='favorites')
-
-    class Meta:
-        unique_together = ('user', 'recipe')
+    class Meta(UserRecipeRelation.Meta):
         verbose_name = "Избранный рецепт"
         verbose_name_plural = "Избранные рецепты"
 
-    def __str__(self):
-        return f"Избранное: {self.recipe.name} у {self.user.username}"
 
-
-class ShoppingCart(models.Model):
+class ShoppingCart(UserRecipeRelation):
     """
     Модель для списка покупок.
     """
-    user = models.ForeignKey(User, on_delete=models.CASCADE,
-                             related_name='shopping_cart')
-    recipe = models.ForeignKey(Recipe, on_delete=models.CASCADE,
-                               related_name='in_cart')
-
-    class Meta:
-        unique_together = ('user', 'recipe')
+    class Meta(UserRecipeRelation.Meta):
         verbose_name = "Список покупок"
         verbose_name_plural = "Списки покупок"
 
-    def __str__(self):
-        return (f"{self.recipe.name} в списке покупок"
-                f" у {self.user.username}")
+
+# class FavoriteRecipe(models.Model):
+#     """
+#     Модель для избранных рецептов.
+#     """
+#     user = models.ForeignKey(User, on_delete=models.CASCADE,
+#                              related_name='favorite_recipes')
+#     recipe = models.ForeignKey(Recipe, on_delete=models.CASCADE,
+#                                related_name='favorites')
+#
+#     class Meta:
+#         unique_together = ('user', 'recipe')
+#         verbose_name = "Избранный рецепт"
+#         verbose_name_plural = "Избранные рецепты"
+#
+#     def __str__(self):
+#         return f"Избранное: {self.recipe.name} у {self.user.username}"
+#
+#
+# class ShoppingCart(models.Model):
+#     """
+#     Модель для списка покупок.
+#     """
+#     user = models.ForeignKey(User, on_delete=models.CASCADE,
+#                              related_name='shopping_cart')
+#     recipe = models.ForeignKey(Recipe, on_delete=models.CASCADE,
+#                                related_name='in_cart')
+#
+#     class Meta:
+#         unique_together = ('user', 'recipe')
+#         verbose_name = "Список покупок"
+#         verbose_name_plural = "Списки покупок"
+#
+#     def __str__(self):
+#         return (f"{self.recipe.name} в списке покупок"
+#                 f" у {self.user.username}")
 
 
 class Subscription(models.Model):
