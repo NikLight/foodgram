@@ -112,9 +112,13 @@ class UserViewSet(DjoserViewSet):
         return Response(serializer.data,
                         status=status.HTTP_200_OK)
 
-    @action(detail=True, methods=['post', 'delete'], url_path='subscribe',
-            permission_classes=[IsAuthenticated])
+    @action(detail=True,
+            permission_classes=(IsAuthenticated,))
     def subscribe(self, request, pk=None):
+        pass
+
+    @subscribe.mapping.post
+    def subscribe_post(self, request, pk=None):
         user = request.user
         author = get_object_or_404(User, pk=pk)
 
@@ -143,7 +147,7 @@ class UserViewSet(DjoserViewSet):
         return Response(response_data, status=status.HTTP_201_CREATED)
 
     @subscribe.mapping.delete
-    def unsubscribe(self, request, pk=None):
+    def unsubscribe_delete(self, request, pk=None):
         user = request.user
         author = get_object_or_404(User, pk=pk)
 
