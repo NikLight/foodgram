@@ -129,7 +129,8 @@ class UserViewSet(DjoserViewSet):
             except ValueError:
                 return Response(
                     {
-                        "detail": "Неверное значение параметра 'recipes_limit'."},
+                        "detail": "Неверное значение"
+                                  " параметра 'recipes_limit'."},
                     status=status.HTTP_400_BAD_REQUEST
                 )
 
@@ -250,10 +251,14 @@ class RecipeViewSet(viewsets.ModelViewSet, UserRecipeRelationMixin):
         user = request.user
         recipe = get_object_or_404(Recipe, pk=pk)
         self.relation_model = ShoppingCart
-        self.success_add_message = "Рецепт успешно добавлен в список покупок."
-        self.success_remove_message = "Рецепт успешно удалён из списка покупок."
-        self.already_exists_message = "Рецепт уже в списке покупок."
-        self.not_exists_message = "Рецепт не в списке покупок."
+        self.success_add_message = ("Рецепт успешно добавлен в"
+                                    " список покупок.")
+        self.success_remove_message = ("Рецепт успешно удалён из"
+                                       " списка покупок.")
+        self.already_exists_message = ("Рецепт уже в"
+                                       " списке покупок.")
+        self.not_exists_message = ("Рецепт не в"
+                                   " списке покупок.")
 
         if request.method == 'POST':
             return self.add_relation(user, recipe)
