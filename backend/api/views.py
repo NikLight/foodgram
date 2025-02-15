@@ -181,10 +181,10 @@ class TagViewSet(ReadOnlyModelViewSet):
 
 
 class IngredientViewSet(ReadOnlyModelViewSet):
-    queryset = Ingredient.objects.all().order_by('name')
+    queryset = Ingredient.objects.all()
     serializer_class = IngredientSerializer
-    filter_backends = [CustomSearchFilter, DjangoFilterBackend]
-    search_fields = ['name']
+    filter_backends = [CustomSearchFilter]
+    search_fields = ['^name']
     pagination_class = None
 
 
