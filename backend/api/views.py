@@ -146,7 +146,6 @@ class UserViewSet(DjoserViewSet):
             return Response(response_data,
                             status=status.HTTP_201_CREATED)
 
-
         subscription = Subscription.objects.filter(user=user,
                                                    author=author).first()
         if not subscription:
