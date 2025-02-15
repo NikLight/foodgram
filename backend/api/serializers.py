@@ -4,13 +4,28 @@ import logging
 from django.contrib.auth import get_user_model
 from django.core.files.base import ContentFile
 from django.core.validators import EmailValidator, RegexValidator
+
 from djoser.serializers import UserCreateSerializer as DjoserSerializer
 from djoser.serializers import UserSerializer
-from recipes.constants import (MAX_LENGTH, MAX_LENGTH_EMAIL, MAX_LENGTH_ROLE,
-                               USERNAME_SEARCH_REGEX)
-from recipes.models import (FavoriteRecipe, Ingredient, IngredientInRecipe,
-                            Recipe, RecipeTag, ShoppingCart, Subscription, Tag)
+
 from rest_framework import serializers
+
+from recipes.constants import (
+    MAX_LENGTH,
+    MAX_LENGTH_EMAIL,
+    MAX_LENGTH_ROLE,
+    USERNAME_SEARCH_REGEX,
+)
+from recipes.models import (
+    FavoriteRecipe,
+    Ingredient,
+    IngredientInRecipe,
+    Recipe,
+    RecipeTag,
+    ShoppingCart,
+    Subscription,
+    Tag,
+)
 
 logger = logging.getLogger(__name__)
 

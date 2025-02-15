@@ -3,14 +3,12 @@ from io import BytesIO
 
 import requests
 import short_url
+
 from django.contrib.auth import get_user_model
 from django.http import Http404, HttpResponse
 from django.shortcuts import get_object_or_404, redirect
 from django_filters.rest_framework import DjangoFilterBackend
 from djoser.views import UserViewSet as DjoserViewSet
-from recipes.constants import FreeSans_Link
-from recipes.models import (FavoriteRecipe, Ingredient, IngredientInRecipe,
-                            Recipe, ShoppingCart, Subscription, Tag)
 from reportlab.lib.pagesizes import letter
 from reportlab.pdfbase import pdfmetrics
 from reportlab.pdfbase.ttfonts import TTFont
@@ -22,13 +20,30 @@ from rest_framework.permissions import AllowAny, IsAuthenticated
 from rest_framework.response import Response
 from rest_framework.viewsets import ReadOnlyModelViewSet
 
+from recipes.constants import FreeSans_Link
+from recipes.models import (
+    FavoriteRecipe,
+    Ingredient,
+    IngredientInRecipe,
+    Recipe,
+    ShoppingCart,
+    Subscription,
+    Tag,
+)
+
 from .filters import CustomSearchFilter, RecipeFilter
 from .pagination import CustomPagination
 from .permissions import IsAuthorOrAdmin
-from .serializers import (Base64ImageField, CustomUserSerializer,
-                          IngredientSerializer, RecipeCreateSerializer,
-                          RecipeGetSerializer, RecipeShortSerializer,
-                          SubscriptionUserSerializer, TagSerializer)
+from .serializers import (
+    Base64ImageField,
+    CustomUserSerializer,
+    IngredientSerializer,
+    RecipeCreateSerializer,
+    RecipeGetSerializer,
+    RecipeShortSerializer,
+    SubscriptionUserSerializer,
+    TagSerializer,
+)
 
 User = get_user_model()
 

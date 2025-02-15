@@ -1,4 +1,5 @@
 from api.views import redirect_to_recipe
+
 from django.conf import settings
 from django.conf.urls.static import static
 from django.contrib import admin

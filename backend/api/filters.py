@@ -1,6 +1,8 @@
 from django.contrib.auth import get_user_model
 from django_filters import rest_framework as filters
 from recipes.models import Recipe
+from rest_framework import filters as filtration
+
 
 User = get_user_model()
 
@@ -35,7 +37,7 @@ class RecipeFilter(filters.FilterSet):
         return queryset
 
 
-class CustomSearchFilter(filters.SearchFilter):
+class CustomSearchFilter(filtration.SearchFilter):
     def filter_queryset(self, request, queryset, view):
         search_param = request.query_params.get('name', '').strip()
         if search_param:
