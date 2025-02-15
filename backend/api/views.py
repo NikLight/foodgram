@@ -6,6 +6,7 @@ import short_url
 from django.contrib.auth import get_user_model
 from django.http import Http404, HttpResponse
 from django.shortcuts import get_object_or_404, redirect
+from django_filters.rest_framework import DjangoFilterBackend
 from djoser.views import UserViewSet as DjoserViewSet
 from recipes.constants import FreeSans_Link
 from recipes.models import (FavoriteRecipe, Ingredient, IngredientInRecipe,
@@ -21,7 +22,7 @@ from rest_framework.permissions import AllowAny, IsAuthenticated
 from rest_framework.response import Response
 from rest_framework.viewsets import ReadOnlyModelViewSet
 
-from .filters import IngredientSearchFilter, RecipeFilter
+from .filters import CustomSearchFilter, RecipeFilter
 from .pagination import CustomPagination
 from .permissions import IsAuthorOrAdmin
 from .serializers import (Base64ImageField, CustomUserSerializer,
@@ -112,58 +113,51 @@ class UserViewSet(DjoserViewSet):
         return Response(serializer.data,
                         status=status.HTTP_200_OK)
 
-    @action(detail=True,
-            permission_classes=(IsAuthenticated,))
-    def subscribe(self, request, pk=None):
-        pass
-
-    @subscribe.mapping.post
-    def subscribe_post(self, request, pk=None):
+    @action(detail=True, methods=['post', 'delete'], url_path='subscribe',
+            permission_classes=[IsAuthenticated])
+    def subscribe(self, request, id=None):
+        """Позволяет подписываться и отписываться от пользователей."""
         user = request.user
-        author = get_object_or_404(User, pk=pk)
+        author = get_object_or_404(User, pk=id)
 
-        Subscription.objects.create(user=user, author=author)
+        if request.method == 'POST':
 
-        recipes_limit = request.query_params.get('recipes_limit')
-        recipes = Recipe.objects.filter(author=author)
-        if recipes_limit:
-            try:
-                recipes_limit = int(recipes_limit)
-                recipes = recipes[:recipes_limit]
-            except ValueError:
-                return Response(
-                    {
-                        "detail": "Неверное значение"
-                                  " параметра 'recipes_limit'."},
-                    status=status.HTTP_400_BAD_REQUEST
-                )
+            Subscription.objects.create(user=user, author=author)
 
-        serializer = SubscriptionUserSerializer(
-            author, context={'request': request})
-        response_data = serializer.data
-        response_data['recipes'] = RecipeShortSerializer(
-            recipes, many=True).data
+            recipes_limit = request.query_params.get('recipes_limit', None)
+            recipes = Recipe.objects.filter(author=author)
+            if recipes_limit:
+                try:
+                    recipes_limit = int(recipes_limit)
+                    recipes = recipes[:recipes_limit]
+                except ValueError:
+                    return Response(
+                        {"detail": "Неверное значение параметра"
+                                   " 'recipes_limit'."},
+                        status=status.HTTP_400_BAD_REQUEST
+                    )
 
-        return Response(response_data, status=status.HTTP_201_CREATED)
+            serializer = SubscriptionUserSerializer(
+                author, context={'request': request})
+            response_data = serializer.data
+            response_data['recipes'] = RecipeShortSerializer(
+                recipes, many=True).data
 
-    @subscribe.mapping.delete
-    def unsubscribe_delete(self, request, pk=None):
-        user = request.user
-        author = get_object_or_404(User, pk=pk)
+            return Response(response_data,
+                            status=status.HTTP_201_CREATED)
 
-        subscription = Subscription.objects.filter(
-            user=user, author=author).first()
+
+        subscription = Subscription.objects.filter(user=user,
+                                                   author=author).first()
         if not subscription:
             return Response(
                 {"detail": "Вы не подписаны на этого пользователя."},
                 status=status.HTTP_400_BAD_REQUEST
             )
-
         subscription.delete()
         return Response(
             {"detail": "Вы успешно отписались."},
-            status=status.HTTP_204_NO_CONTENT
-        )
+            status=status.HTTP_204_NO_CONTENT)
 
 
 class TagViewSet(ReadOnlyModelViewSet):
@@ -175,9 +169,9 @@ class TagViewSet(ReadOnlyModelViewSet):
 class IngredientViewSet(ReadOnlyModelViewSet):
     queryset = Ingredient.objects.all().order_by('name')
     serializer_class = IngredientSerializer
-    pagination_class = None
-    filter_backends = [IngredientSearchFilter]
+    filter_backends = [CustomSearchFilter, DjangoFilterBackend]
     search_fields = ['name']
+    pagination_class = None
 
 
 class UserRecipeRelationMixin:

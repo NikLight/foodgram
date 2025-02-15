@@ -37,17 +37,9 @@ class RecipeFilter(filters.FilterSet):
         return queryset
 
 
-class IngredientSearchFilter(filtration.SearchFilter):
+class CustomSearchFilter(filters.SearchFilter):
     def filter_queryset(self, request, queryset, view):
-        search_param = request.query_params.get('search', '').strip()
-        if not search_param:
-            return queryset
-
-        starts_with = queryset.filter(name__istartswith=search_param)
-
-        contains = queryset.filter(
-            Q(name__icontains=search_param) & ~Q(
-                id__in=starts_with.values('id'))
-        )
-
-        return starts_with.union(contains).order_by('name')
+        search_param = request.query_params.get('name', '').strip()
+        if search_param:
+            queryset = queryset.filter(name__icontains=search_param)
+        return queryset
