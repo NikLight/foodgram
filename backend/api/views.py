@@ -7,7 +7,6 @@ import short_url
 from django.contrib.auth import get_user_model
 from django.http import Http404, HttpResponse
 from django.shortcuts import get_object_or_404, redirect
-from django_filters.rest_framework import DjangoFilterBackend
 from djoser.views import UserViewSet as DjoserViewSet
 from reportlab.lib.pagesizes import letter
 from reportlab.pdfbase import pdfmetrics
