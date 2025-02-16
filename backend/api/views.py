@@ -31,7 +31,7 @@ from recipes.models import (
 )
 
 from .filters import CustomSearchFilter, RecipeFilter
-from .pagination import CustomPagination
+from .pagination import Pagination
 from .permissions import IsAuthorOrAdmin
 from .serializers import (
     Base64ImageField,
@@ -65,7 +65,7 @@ def redirect_to_recipe(request, s):
 
 class UserViewSet(DjoserViewSet):
     queryset = User.objects.all().order_by('id')
-    pagination_class = CustomPagination
+    pagination_class = Pagination
 
     @action(detail=False, methods=['get'],
             permission_classes=[IsAuthenticated])
@@ -224,7 +224,7 @@ class UserRecipeRelationMixin:
 class RecipeViewSet(viewsets.ModelViewSet, UserRecipeRelationMixin):
     queryset = Recipe.objects.all().order_by('-pub_date')
     permission_classes = [AllowAny]
-    pagination_class = CustomPagination
+    pagination_class = Pagination
     filterset_class = RecipeFilter
 
     def get_serializer_class(self):

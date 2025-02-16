@@ -13,8 +13,9 @@ class RecipeFilter(filters.FilterSet):
     is_in_shopping_cart = filters.BooleanFilter(
         method='filter_is_in_shopping_cart')
 
-    tags = filters.AllValuesMultipleFilter(
-        field_name='tags__slug'
+    tags = filters.CharFilter(
+        field_name='tags__slug',
+        lookup_expr='in'
     )
     author = filters.ModelChoiceFilter(
         field_name='author__id',
