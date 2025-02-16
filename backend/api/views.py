@@ -8,6 +8,7 @@ from django.contrib.auth import get_user_model
 from django.http import Http404, HttpResponse
 from django.shortcuts import get_object_or_404, redirect
 from djoser.views import UserViewSet as DjoserViewSet
+from django_filters.rest_framework import DjangoFilterBackend
 from reportlab.lib.pagesizes import letter
 from reportlab.pdfbase import pdfmetrics
 from reportlab.pdfbase.ttfonts import TTFont
@@ -225,6 +226,7 @@ class RecipeViewSet(viewsets.ModelViewSet, UserRecipeRelationMixin):
     queryset = Recipe.objects.all().order_by('-pub_date')
     permission_classes = [AllowAny]
     pagination_class = Pagination
+    filter_backends = (DjangoFilterBackend,)
     filterset_class = RecipeFilter
 
     def get_serializer_class(self):
