@@ -65,7 +65,7 @@ def redirect_to_recipe(request, s):
 
 
 class UserViewSet(DjoserViewSet):
-    queryset = User.objects.all()
+    queryset = User.objects.all().order_by('id')
     pagination_class = Pagination
 
     @action(detail=False, methods=['get'],
@@ -223,7 +223,7 @@ class UserRecipeRelationMixin:
 
 
 class RecipeViewSet(viewsets.ModelViewSet, UserRecipeRelationMixin):
-    queryset = Recipe.objects.all()
+    queryset = Recipe.objects.all().order_by('-pub_date')
     permission_classes = [AllowAny]
     pagination_class = Pagination
     filter_backends = (DjangoFilterBackend,)

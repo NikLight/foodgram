@@ -18,7 +18,7 @@ class RecipeFilter(filters.FilterSet):
         field_name='tags__slug',
     )
     author = filters.ModelChoiceFilter(
-        field_name='author__id',
+        field_name='author',
         queryset=User.objects.all())
 
     class Meta:
