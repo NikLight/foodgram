@@ -19,6 +19,7 @@ from rest_framework.exceptions import ValidationError
 from rest_framework.permissions import AllowAny, IsAuthenticated
 from rest_framework.response import Response
 from rest_framework.viewsets import ReadOnlyModelViewSet
+from rest_framework.pagination import LimitOffsetPagination
 
 from recipes.constants import FreeSans_Link
 from recipes.models import (
@@ -32,7 +33,6 @@ from recipes.models import (
 )
 
 from .filters import CustomSearchFilter, RecipeFilter
-from .pagination import Pagination
 from .permissions import IsAuthorOrAdmin
 from .serializers import (
     Base64ImageField,
@@ -66,7 +66,7 @@ def redirect_to_recipe(request, s):
 
 class UserViewSet(DjoserViewSet):
     queryset = User.objects.all()
-    pagination_class = Pagination
+    pagination_class = LimitOffsetPagination
 
     @action(detail=False, methods=['get'],
             permission_classes=[IsAuthenticated])
@@ -225,7 +225,7 @@ class UserRecipeRelationMixin:
 class RecipeViewSet(viewsets.ModelViewSet, UserRecipeRelationMixin):
     queryset = Recipe.objects.all()
     permission_classes = [AllowAny]
-    pagination_class = Pagination
+    pagination_class = LimitOffsetPagination
     filter_backends = (DjangoFilterBackend,)
     filterset_class = RecipeFilter
 
