@@ -32,7 +32,7 @@ from recipes.models import (
     Tag,
 )
 
-from .filters import RecipeFilter
+from .filters import RecipeFilter, CustomSearchFilter
 from .permissions import IsAuthorOrAdmin
 from .serializers import (
     Base64ImageField,
@@ -177,15 +177,17 @@ class UserViewSet(DjoserViewSet):
 class TagViewSet(ReadOnlyModelViewSet):
     queryset = Tag.objects.all()
     serializer_class = TagSerializer
-    #pagination_class = None
+    pagination_class = None
+    permission_classes = (AllowAny,)
 
 
 class IngredientViewSet(ReadOnlyModelViewSet):
     queryset = Ingredient.objects.all()
     serializer_class = IngredientSerializer
-    #filter_backends = [CustomSearchFilter]
-    #search_fields = ['^name']
-    #pagination_class = None
+    filter_backends = (DjangoFilterBackend,)
+    pagination_class = None
+    permission_classes = (AllowAny,)
+    filterset_class = CustomSearchFilter
 
 
 class UserRecipeRelationMixin:
