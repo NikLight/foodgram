@@ -223,7 +223,7 @@ class UserRecipeRelationMixin:
 
 
 class RecipeViewSet(viewsets.ModelViewSet, UserRecipeRelationMixin):
-    queryset = Recipe.objects.all()
+    queryset = Recipe.objects.all().order_by('-pub_date')
     permission_classes = [AllowAny]
     pagination_class = LimitOffsetPagination
     filter_backends = (DjangoFilterBackend,)
