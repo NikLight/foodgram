@@ -28,14 +28,14 @@ class RecipeFilter(filters.FilterSet):
     def filter_is_favorited(self, queryset, name, value):
         user = self.request.user
         if value and not user.is_anonymous:
-            return queryset.filter(favorites__user=user)
-        return queryset
+            return queryset.filter(favorites__user=user).order_by('-pub_date')
+        return queryset.order_by('-pub_date')
 
     def filter_is_in_shopping_cart(self, queryset, name, value):
         user = self.request.user
         if value and not user.is_anonymous:
-            return queryset.filter(in_cart__user=user)
-        return queryset
+            return queryset.filter(in_cart__user=user).order_by('-pub_date')
+        return queryset.order_by('-pub_date')
 
 
 class CustomSearchFilter(filtration.SearchFilter):

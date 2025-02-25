@@ -227,9 +227,9 @@ class UserRecipeRelationMixin:
 class RecipeViewSet(viewsets.ModelViewSet, UserRecipeRelationMixin):
     queryset = Recipe.objects.all().order_by('-pub_date')
     permission_classes = [AllowAny]
-    pagination_class = LimitOffsetPagination
     filter_backends = (DjangoFilterBackend,)
     filterset_class = RecipeFilter
+    pagination_class = LimitOffsetPagination
 
     def get_serializer_class(self):
         if self.action in ['list', 'retrieve']:
