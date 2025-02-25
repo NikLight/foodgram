@@ -32,7 +32,7 @@ from recipes.models import (
     Tag,
 )
 
-from .filters import CustomSearchFilter, RecipeFilter
+from .filters import RecipeFilter
 from .permissions import IsAuthorOrAdmin
 from .serializers import (
     Base64ImageField,
