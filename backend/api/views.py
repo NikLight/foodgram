@@ -184,10 +184,10 @@ class TagViewSet(ReadOnlyModelViewSet):
 class IngredientViewSet(ReadOnlyModelViewSet):
     queryset = Ingredient.objects.all()
     serializer_class = IngredientSerializer
-    filter_backends = (DjangoFilterBackend,)
     pagination_class = None
     permission_classes = (AllowAny,)
     filterset_class = CustomSearchFilter
+    search_fields = ['^name']
 
 
 class UserRecipeRelationMixin:
@@ -225,7 +225,7 @@ class UserRecipeRelationMixin:
 
 
 class RecipeViewSet(viewsets.ModelViewSet, UserRecipeRelationMixin):
-    queryset = Recipe.objects.all().order_by('-pub_date')
+    queryset = Recipe.objects.all()
     permission_classes = [AllowAny]
     filter_backends = (DjangoFilterBackend,)
     filterset_class = RecipeFilter
