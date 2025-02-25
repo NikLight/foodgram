@@ -177,15 +177,15 @@ class UserViewSet(DjoserViewSet):
 class TagViewSet(ReadOnlyModelViewSet):
     queryset = Tag.objects.all()
     serializer_class = TagSerializer
-    pagination_class = None
+    #pagination_class = None
 
 
 class IngredientViewSet(ReadOnlyModelViewSet):
     queryset = Ingredient.objects.all()
     serializer_class = IngredientSerializer
-    filter_backends = [CustomSearchFilter]
-    search_fields = ['^name']
-    pagination_class = None
+    #filter_backends = [CustomSearchFilter]
+    #search_fields = ['^name']
+    #pagination_class = None
 
 
 class UserRecipeRelationMixin:
