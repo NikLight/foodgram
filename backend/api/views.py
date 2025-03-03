@@ -8,6 +8,7 @@ from django.contrib.auth import get_user_model
 from django.http import Http404, HttpResponse
 from django.shortcuts import get_object_or_404, redirect
 from djoser.views import UserViewSet as DjoserViewSet
+from django_filters.rest_framework import DjangoFilterBackend
 from reportlab.lib.pagesizes import letter
 from reportlab.pdfbase import pdfmetrics
 from reportlab.pdfbase.ttfonts import TTFont
@@ -31,7 +32,7 @@ from recipes.models import (
     Tag,
 )
 
-from .filters import RecipeFilter, CustomSearchFilter
+from .filters import CustomSearchFilter, RecipeFilter
 from .permissions import IsAuthorOrAdmin
 from .serializers import (
     Base64ImageField,
@@ -177,13 +178,11 @@ class TagViewSet(ReadOnlyModelViewSet):
     queryset = Tag.objects.all()
     serializer_class = TagSerializer
     pagination_class = None
-    permission_classes = (AllowAny,)
 
 
 class IngredientViewSet(ReadOnlyModelViewSet):
     queryset = Ingredient.objects.all()
     serializer_class = IngredientSerializer
-    permission_classes = (AllowAny,)
     filter_backends = [CustomSearchFilter]
     search_fields = ['^name']
     pagination_class = None
@@ -226,8 +225,9 @@ class UserRecipeRelationMixin:
 class RecipeViewSet(viewsets.ModelViewSet, UserRecipeRelationMixin):
     queryset = Recipe.objects.all()
     permission_classes = [AllowAny]
-    filterset_class = RecipeFilter
     pagination_class = LimitOffsetPagination
+    filter_backends = (DjangoFilterBackend,)
+    filterset_class = RecipeFilter
 
     def get_serializer_class(self):
         if self.action in ['list', 'retrieve']:

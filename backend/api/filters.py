@@ -14,10 +14,11 @@ class RecipeFilter(filters.FilterSet):
         method='filter_is_in_shopping_cart')
 
     tags = filters.AllValuesMultipleFilter(
-        field_name='tags__slug'
+        label='Теги',
+        field_name='tags__slug',
     )
     author = filters.ModelChoiceFilter(
-        field_name='author__id',
+        field_name='author',
         queryset=User.objects.all())
 
     class Meta:
