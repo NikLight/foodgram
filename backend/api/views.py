@@ -178,25 +178,15 @@ class TagViewSet(ReadOnlyModelViewSet):
     queryset = Tag.objects.all()
     serializer_class = TagSerializer
     pagination_class = None
+    permission_classes = (AllowAny,)
 
 
 class IngredientViewSet(ReadOnlyModelViewSet):
     queryset = Ingredient.objects.all()
     serializer_class = IngredientSerializer
+    permission_classes = (AllowAny,)
+    search_fields = ['^name']
     pagination_class = None
-
-    def get_queryset(self):
-        query = self.request.query_params.get('name', None)
-
-        if query:
-            results_start = Ingredient.objects.filter(
-                name__istartswith=query)
-            results_contains = Ingredient.objects.filter(
-                name__icontains=query).exclude(
-                name__istartswith=query)
-            results = results_start | results_contains
-
-            return results.order_by('name')
 
 
 class UserRecipeRelationMixin:

@@ -1,6 +1,7 @@
 from django.contrib.auth import get_user_model
 from django_filters import rest_framework as filters
 from recipes.models import Recipe
+from rest_framework import filters as filtration
 
 
 User = get_user_model()
@@ -33,4 +34,12 @@ class RecipeFilter(filters.FilterSet):
         user = self.request.user
         if value and not user.is_anonymous:
             return queryset.filter(in_cart__user=user)
+        return queryset
+
+
+class CustomSearchFilter(filtration.SearchFilter):
+    def filter_queryset(self, request, queryset, view):
+        search_param = request.query_params.get('name', '').strip()
+        if search_param:
+            queryset = queryset.filter(name__icontains=search_param)
         return queryset
