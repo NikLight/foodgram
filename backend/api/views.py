@@ -32,7 +32,7 @@ from recipes.models import (
     Tag,
 )
 
-from .filters import RecipeFilter, CustomSearchFilter
+from .filters import RecipeFilter
 from .permissions import IsAuthorOrAdmin
 from .serializers import (
     Base64ImageField,
@@ -178,16 +178,25 @@ class TagViewSet(ReadOnlyModelViewSet):
     queryset = Tag.objects.all()
     serializer_class = TagSerializer
     pagination_class = None
-    permission_classes = (AllowAny,)
 
 
 class IngredientViewSet(ReadOnlyModelViewSet):
     queryset = Ingredient.objects.all()
     serializer_class = IngredientSerializer
     pagination_class = None
-    permission_classes = (AllowAny,)
-    filterset_class = CustomSearchFilter
-    search_fields = ['^name']
+
+    def get_queryset(self):
+        query = self.request.query_params.get('name', None)
+
+        if query:
+            results_start = Ingredient.objects.filter(
+                name__istartswith=query)
+            results_contains = Ingredient.objects.filter(
+                name__icontains=query).exclude(
+                name__istartswith=query)
+            results = results_start | results_contains
+
+            return results.order_by('name')
 
 
 class UserRecipeRelationMixin:
