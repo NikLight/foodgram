@@ -32,7 +32,7 @@ from recipes.models import (
     Tag,
 )
 
-from .filters import RecipeFilter
+from .filters import RecipeFilter, CustomSearchFilter
 from .permissions import IsAuthorOrAdmin
 from .serializers import (
     Base64ImageField,
@@ -185,6 +185,7 @@ class IngredientViewSet(ReadOnlyModelViewSet):
     queryset = Ingredient.objects.all()
     serializer_class = IngredientSerializer
     permission_classes = (AllowAny,)
+    filter_backends = [CustomSearchFilter]
     search_fields = ['^name']
     pagination_class = None
 
