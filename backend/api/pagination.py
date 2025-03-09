@@ -1,5 +1,7 @@
 from rest_framework.pagination import PageNumberPagination
 
 
-class NoPagination(PageNumberPagination):
-    page_size = None
+class SetPagination(PageNumberPagination):
+    page_size_query_param = "limit"
+    page_size = 6
+    

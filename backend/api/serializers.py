@@ -71,7 +71,7 @@ class UserCreateSerializer(DjoserSerializer):
                   'password')
 
 
-class CustomUserSerializer(UserSerializer):
+class UserSerializer(UserSerializer):
     avatar = Base64ImageField(required=False, use_url=True)
     is_subscribed = serializers.SerializerMethodField()
 
@@ -143,7 +143,7 @@ class RecipeCreateSerializer(serializers.ModelSerializer):
         allow_null=False,
         allow_empty=False)
 
-    author = CustomUserSerializer(read_only=True)
+    author = UserSerializer(read_only=True)
     image = Base64ImageField(required=True)
     name = serializers.CharField(max_length=MAX_LENGTH,
                                  required=True)
@@ -323,7 +323,7 @@ class RecipeGetSerializer(serializers.ModelSerializer):
         read_only=True,
         source='ingredient_amounts')
     tags = TagSerializer(many=True, read_only=True)
-    author = CustomUserSerializer(read_only=True)
+    author = UserSerializer(read_only=True)
     image = Base64ImageField(read_only=True)
     is_favorited = serializers.SerializerMethodField()
     is_in_shopping_cart = serializers.SerializerMethodField()

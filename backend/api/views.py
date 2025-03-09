@@ -33,10 +33,11 @@ from recipes.models import (
 )
 
 from .filters import RecipeFilter
+from .pagination import SetPagination
 from .permissions import IsAuthorOrAdmin
 from .serializers import (
     Base64ImageField,
-    CustomUserSerializer,
+    UserSerializer,
     IngredientSerializer,
     RecipeCreateSerializer,
     RecipeGetSerializer,
@@ -71,7 +72,7 @@ class UserViewSet(DjoserViewSet):
     @action(detail=False, methods=['get'],
             permission_classes=[IsAuthenticated])
     def me(self, request):
-        serializer = CustomUserSerializer(request.user)
+        serializer = UserSerializer(request.user)
         return Response(serializer.data, status=status.HTTP_200_OK)
 
     @action(detail=False, methods=['put', 'delete'], url_path='me/avatar',
@@ -85,7 +86,7 @@ class UserViewSet(DjoserViewSet):
                 try:
                     user.avatar = Base64ImageField().to_internal_value(avatar)
                     user.save()
-                    serializer = CustomUserSerializer(user)
+                    serializer = UserSerializer(user)
                     return Response(serializer.data,
                                     status=status.HTTP_200_OK)
                 except ValidationError as e:
@@ -98,7 +99,7 @@ class UserViewSet(DjoserViewSet):
 
         user.avatar.delete(save=True)
         user.save()
-        serializer = CustomUserSerializer(user)
+        serializer = UserSerializer(user)
         return Response(serializer.data, status=status.HTTP_204_NO_CONTENT)
 
     @action(detail=False, methods=['get'], url_path='subscriptions',
@@ -236,19 +237,11 @@ class UserRecipeRelationMixin:
 
 
 class RecipeViewSet(viewsets.ModelViewSet, UserRecipeRelationMixin):
+    queryset = Recipe.objects.all()
     permission_classes = [AllowAny]
-    pagination_class = LimitOffsetPagination
+    pagination_class = SetPagination
     filter_backends = (DjangoFilterBackend,)
     filterset_class = RecipeFilter
-
-    def get_queryset(self):
-        user = self.request.user
-        queryset = Recipe.objects.select_related(
-            'author'
-        ).prefetch_related('ingredients', 'tags')
-        if user.is_authenticated:
-            queryset = queryset.with_annotate(user=user)
-        return queryset
 
     def get_serializer_class(self):
         if self.action in ['list', 'retrieve']:
