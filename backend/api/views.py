@@ -236,11 +236,19 @@ class UserRecipeRelationMixin:
 
 
 class RecipeViewSet(viewsets.ModelViewSet, UserRecipeRelationMixin):
-    queryset = Recipe.objects.all()
     permission_classes = [AllowAny]
     pagination_class = LimitOffsetPagination
     filter_backends = (DjangoFilterBackend,)
     filterset_class = RecipeFilter
+
+    def get_queryset(self):
+        user = self.request.user
+        queryset = Recipe.objects.select_related(
+            'author'
+        ).prefetch_related('ingredients', 'tags')
+        if user.is_authenticated:
+            queryset = queryset.with_annotate(user=user)
+        return queryset
 
     def get_serializer_class(self):
         if self.action in ['list', 'retrieve']:
