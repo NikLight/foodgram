@@ -9,7 +9,7 @@
 
 ## Автор
 
-*   ФИО: *Ваше ФИО*
+*   ФИО: **
 *   GitHub: [https://github.com/niklight](https://github.com/niklight)
 
 ## Технологический стек
